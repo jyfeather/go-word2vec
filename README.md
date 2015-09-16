@@ -1,4 +1,7 @@
-Under working based on [google word2vec](https://code.google.com/p/word2vec/)
+# go-word2vec
+
+* Under working based on [google word2vec](https://code.google.com/p/word2vec/)
+* Does not support training text files; only loading is allowed.
 
 ### Demo
 before run `go run demo.go`, you need
