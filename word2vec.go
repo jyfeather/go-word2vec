@@ -9,6 +9,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"os"
+	"strings"
 )
 
 // Model is the Word2vec model.
@@ -81,6 +82,7 @@ func (m *Model) MostSimilar(positives, negatives []string, n int) ([]Pair, error
 	// Construct the target vector.
 	vec := Vector(make([]float32, m.Layer1Size))
 	for _, word := range positives {
+		word = strings.TrimSpace(word) // remove whitespace
 		if wordId, ok := m.Vocab[word]; !ok {
 			return nil, fmt.Errorf("Word not found: %s", word)
 		} else {
@@ -88,10 +90,11 @@ func (m *Model) MostSimilar(positives, negatives []string, n int) ([]Pair, error
 		}
 	}
 	for _, word := range negatives {
+		word = strings.TrimSpace(word) // remove whitespace
 		if wordId, ok := m.Vocab[word]; !ok {
 			return nil, fmt.Errorf("Word not found: %s", word)
 		} else {
-			vec.Add(1, m.Vector(wordId))
+			vec.Add(-1, m.Vector(wordId))
 		}
 	}
 	vec.Normalize()
@@ -108,4 +111,22 @@ func (m *Model) MostSimilar(positives, negatives []string, n int) ([]Pair, error
 		}
 	}
 	return r, nil
+}
+
+// Query
+// more than one positive words: use ';' as separator
+// negative words: use '-' as separator
+func (m *Model) Query(input string, n int) ([]Pair, error) {
+	posVec := strings.Split(input, ";")
+	negStr := posVec[len(posVec)-1]
+	posVec = posVec[:len(posVec)-1]
+	negVec := strings.Split(negStr, "-")
+	posVec = append(posVec, negVec[0])
+	negVec = negVec[1:len(negVec)]
+
+	res, err := m.MostSimilar(posVec, negVec, n)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
