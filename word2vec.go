@@ -117,7 +117,7 @@ func (m *Model) MostSimilar(positives, negatives []string, n int) ([]Pair, error
 // more than one positive words: use ';' as separator
 // negative words: use '-' as separator
 func (m *Model) Query(input string, n int) ([]Pair, error) {
-	posVec := strings.Split(input, ";")
+	posVec := strings.Split(input, "+")
 	negStr := posVec[len(posVec)-1]
 	posVec = posVec[:len(posVec)-1]
 	negVec := strings.Split(negStr, "-")
