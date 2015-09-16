@@ -1,1 +1,1 @@
-A simple library for loading word2vec binary model.
+Under working based on [google word2vec](https://code.google.com/p/word2vec/)
